@@ -1,0 +1,56 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<mule xmlns:scripting="http://www.mulesoft.org/schema/mule/scripting" xmlns:vm="http://www.mulesoft.org/schema/mule/vm"
+	xmlns:http="http://www.mulesoft.org/schema/mule/http"
+	xmlns="http://www.mulesoft.org/schema/mule/core" xmlns:doc="http://www.mulesoft.org/schema/mule/documentation" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd
+http://www.mulesoft.org/schema/mule/http http://www.mulesoft.org/schema/mule/http/current/mule-http.xsd
+http://www.mulesoft.org/schema/mule/vm http://www.mulesoft.org/schema/mule/vm/current/mule-vm.xsd
+http://www.mulesoft.org/schema/mule/scripting http://www.mulesoft.org/schema/mule/scripting/current/mule-scripting.xsd">
+	<http:listener-config name="HTTP_Listener_config" doc:name="HTTP Listener config" doc:id="4b60900a-f9ab-4a95-82d2-bf2dad532ca0" >
+		<http:listener-connection host="0.0.0.0" port="8082" />
+	</http:listener-config>
+	<vm:config name="persistent_VM_Config" doc:name="VM Config" doc:id="ed17d622-1884-48fe-b697-e8de7918abfe" >
+		<vm:queues >
+			<vm:queue queueName="persistent_Q" />
+		</vm:queues>
+	</vm:config>
+	<vm:config name="Non-persistent_VM_Config" doc:name="VM Config" doc:id="6ca8eb79-8abb-4eb8-8733-a8b800f0a012">
+		<vm:queues >
+			<vm:queue queueName="Non_persistent_Q" />
+		</vm:queues>
+	</vm:config>
+	<configuration-properties doc:name="Configuration properties" doc:id="b58576a8-b8b8-475b-9bbd-090bf2eb6dae" file="test.yaml" />
+	<flow name="vm-test-mule4-non-persistent" doc:id="8610b200-a269-4471-b8bb-a547b6008d9c" >
+		<http:listener doc:name="Listener" doc:id="b37a6dee-d83e-438a-9646-9e90ac5906c9" path="/Nonpersistent" config-ref="HTTP_Listener_config"/>
+		<logger level="INFO" doc:name="Logger" doc:id="ce1fb43c-7760-4d8a-b1dc-8e9d2fc7bd5d" message="# Received from request for VM Non Persistent #[payload]"/>
+		<set-variable value="#[payload.UserName]" doc:name="Set Variable" doc:id="16a4d9f6-405c-4d70-9d9d-b3d6b842cb98" variableName="UserName"/>
+		<vm:publish doc:name="Publish" doc:id="16dabea5-3497-4434-920a-fffb78504563" config-ref="Non-persistent_VM_Config" queueName="Non_persistent_Q"/>
+	</flow>
+	<flow name="vm-test-mule4-Non-persistent-listner" doc:id="11073f3c-99c8-4520-86d1-01eb2144f023" >
+		<vm:listener doc:name="Listener" doc:id="644dccd1-5734-4c7e-b0cf-c26fe92fddac" config-ref="Non-persistent_VM_Config" queueName="Non_persistent_Q"/>
+		<logger level="INFO" doc:name="Logger" doc:id="f18d45f4-1980-49a6-af73-a4190f609b18" message="Consumed Message from Non Persistent Queue #[payload]"/>
+		<flow-ref doc:name="Flow Reference" doc:id="c72d501c-dd2f-4045-b443-165d91cce70d" name="Groovy-Sub-Flow"/>
+		<logger level="INFO" doc:name="Logger" doc:id="5625b7df-8af4-43f0-9256-6273294d0455" message="log-End"/>
+	</flow>
+	<flow name="vm-test-mule4-persistent" doc:id="f6802a67-dfe3-4d5a-acd7-fff9f3771454" >
+		<http:listener doc:name="Listener" doc:id="d8f0369b-846e-414c-8815-4886c1c538ec" path="/persistent" config-ref="HTTP_Listener_config"/>
+		<logger level="INFO" doc:name="Logger" doc:id="c6fe17b1-c4f3-45eb-899a-ee1fdfb21915" message="# Received a request for VM Non Persistent #[payload]"/>
+		<set-variable value="#[payload.UserName]" doc:name="Set Variable" doc:id="f25b0f30-6bfa-483f-912b-034f8442f449" variableName="UserName"/>
+		<vm:publish queueName="persistent_Q" doc:name="Publish" doc:id="d71b0f1d-cba6-464e-99ee-73d55cdad5ed" config-ref="persistent_VM_Config"/>
+	</flow>
+	<flow name="vm-test-mule4-persistent-listner" doc:id="6257ad5a-6106-41c0-9ffe-0134c34f1c85" >
+		<vm:listener doc:name="Listener" doc:id="6b247c9b-334b-4f2f-8ac1-6a2b9bee8ab6" config-ref="persistent_VM_Config" queueName="persistent_Q"/>
+		<logger level="INFO" doc:name="Logger" doc:id="32f19d51-01b6-4407-9aab-683901b39f5f" message="Consumed Message from Persistent Queue"/>
+		<flow-ref doc:name="Flow Reference" doc:id="3243c476-c6d4-41f4-bc59-426d0a065fff" name="Groovy-Sub-Flow"/>
+		<logger level="INFO" doc:name="Logger" doc:id="a2b9c291-0558-4e3c-8c26-7b8ad61693c6" message=" Logge -End"/>
+	
+</flow>
+	<sub-flow name="Groovy-Sub-Flow" doc:id="6bb8acea-df52-417d-8d70-7c462d401507" >
+		<scripting:execute doc:name="Execute" doc:id="ba74b3ce-c796-4484-93f2-116a62698652" engine="groovy">
+			<scripting:code ><![CDATA[Thread.sleep(10000);
+return payload;]]></scripting:code>
+		</scripting:execute>
+		<logger level="INFO" doc:name="Logger" doc:id="979ba045-83c7-4a47-a00a-859248cd5b07" message="??? Sucess #[payload]"/>
+		<set-payload value="#[payload]" doc:name="Set Payload" doc:id="607fc50e-d83d-407b-ab11-893b4174248f" />
+	</sub-flow>
+</mule>
