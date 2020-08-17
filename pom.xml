@@ -41,7 +41,8 @@
 						<!-- Environment Parameter -->
 						<environment>Sandbox</environment>
 						<applicationName>mule-jenkins-jfrog1</applicationName>
-						<workerType>Micro</workerType>
+						<workerType>MICRO</workerType>
+					<objectStoreV2>true</objectStoreV2>
 					</cloudHubDeployment>
 					<sharedLibraries>
 						<sharedLibrary>
