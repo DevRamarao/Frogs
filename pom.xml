@@ -32,6 +32,17 @@
 				<version>${mule.maven.plugin.version}</version>
 				<extensions>true</extensions>
 				<configuration>
+				<cloudHubDeployment>
+						<uri>https://anypoint.mulesoft.com</uri>
+						<muleVersion>4.3.0</muleVersion>
+						<!-- Deploy User Parameter -->
+						<username>RamaraoTech</username>
+						<password>Tech@2020</password>
+						<!-- Environment Parameter -->
+						<environment>Sandbox</environment>
+						<applicationName>mule-jenkins-jfrog1</applicationName>
+						<workerType>Micro</workerType>
+					</cloudHubDeployment>
 					<sharedLibraries>
 						<sharedLibrary>
 							<groupId>org.codehaus.groovy</groupId>
@@ -39,18 +50,7 @@
 						</sharedLibrary>
 					</sharedLibraries>
 					<classifier>mule-application</classifier>
-					<cloudHubDeployment>
-						<uri>https://anypoint.mulesoft.com</uri>
-						<muleVersion>${mule.version}</muleVersion>
-						<!-- Deploy User Parameter -->
-						<username>${anypoint.username}</username>
-						<password>${anypoint.password}</password>
-						<!-- Environment Parameter -->
-						<environment>${cloudhub.environment}</environment>
-						<applicationName>${cloudhub.app}</applicationName>
-						<businessGroup>${cloudhub.bg}</businessGroup>
-						<workerType>${cloudhub.worker}</workerType>
-					</cloudHubDeployment>
+					
 				</configuration>
 			</plugin>
 		</plugins>
