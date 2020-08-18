@@ -22,7 +22,7 @@ http://www.mulesoft.org/schema/mule/scripting http://www.mulesoft.org/schema/mul
 	<configuration-properties doc:name="Configuration properties" doc:id="b58576a8-b8b8-475b-9bbd-090bf2eb6dae" file="test.yaml" />
 	<flow name="vm-test-mule4-non-persistent" doc:id="8610b200-a269-4471-b8bb-a547b6008d9c" >
 		<http:listener doc:name="Listener" doc:id="b37a6dee-d83e-438a-9646-9e90ac5906c9" path="/Nonpersistent" config-ref="HTTP_Listener_config"/>
-		<logger level="INFO" doc:name="Logger" doc:id="ce1fb43c-7760-4d8a-b1dc-8e9d2fc7bd5d" message="# Received from request for VM Non Persistent #[payload]"/>
+		<logger level="INFO" doc:name="Logger" doc:id="ce1fb43c-7760-4d8a-b1dc-8e9d2fc7bd5d" message="# Received welcome request for VM Non Persistent #[payload]"/>
 		<set-variable value="#[payload.UserName]" doc:name="Set Variable" doc:id="16a4d9f6-405c-4d70-9d9d-b3d6b842cb98" variableName="UserName"/>
 		<vm:publish doc:name="Publish" doc:id="16dabea5-3497-4434-920a-fffb78504563" config-ref="Non-persistent_VM_Config" queueName="Non_persistent_Q"/>
 	</flow>
